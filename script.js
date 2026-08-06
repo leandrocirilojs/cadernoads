@@ -233,6 +233,7 @@ function deleteElement(id) {
 }
 
 /* ---------- DRAG AND DROP ---------- */
+/* ---------- DRAG AND DROP (MOUSE E TOUCH) ---------- */
 function makeDraggable(element, id) {
   const handle = element.querySelector(".drag-handle");
   if (!handle) return;
@@ -240,46 +241,89 @@ function makeDraggable(element, id) {
   let isDragging = false;
   let startX, startY, initialLeft, initialTop;
 
-  handle.addEventListener("mousedown", (e) => {
-    if (e.target.tagName === "BUTTON") return;
-
+  // Função para iniciar o movimento (Mouse ou Touch)
+  function startDrag(clientX, clientY) {
     isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
+    startX = clientX;
+    startY = clientY;
     initialLeft = element.offsetLeft;
     initialTop = element.offsetTop;
+  }
 
-    function onMouseMove(moveEvent) {
-      if (!isDragging) return;
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+  // Função para mover o elemento (Mouse ou Touch)
+  function moveDrag(clientX, clientY) {
+    if (!isDragging) return;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
 
-      const newX = Math.max(0, initialLeft + dx);
-      const newY = Math.max(0, initialTop + dy);
+    const newX = Math.max(0, initialLeft + dx);
+    const newY = Math.max(0, initialTop + dy);
 
-      element.style.left = `${newX}px`;
-      element.style.top = `${newY}px`;
+    element.style.left = `${newX}px`;
+    element.style.top = `${newY}px`;
+  }
+
+  // Função para finalizar o movimento
+  function stopDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+
+    // Remove ouvintes Globais de Mouse
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+
+    // Remove ouvintes Globais de Touch
+    document.removeEventListener("touchmove", onTouchMove);
+    document.removeEventListener("touchend", onTouchEnd);
+
+    // Salva a nova posição
+    const items = getSubjectElements();
+    const item = items.find(el => el.id === id);
+    if (item) {
+      item.x = element.offsetLeft;
+      item.y = element.offsetTop;
+      saveToLocalStorage();
+      adjustSheetSize();
     }
+  }
 
-    function onMouseUp() {
-      if (!isDragging) return;
-      isDragging = false;
+  /* --- EVENTOS DE MOUSE --- */
+  function onMouseMove(e) {
+    moveDrag(e.clientX, e.clientY);
+  }
 
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
+  function onMouseUp() {
+    stopDrag();
+  }
 
-      const items = getSubjectElements();
-      const item = items.find(el => el.id === id);
-      if (item) {
-        item.x = element.offsetLeft;
-        item.y = element.offsetTop;
-        saveToLocalStorage();
-        adjustSheetSize(); // Redimensiona a folha ao terminar de arrastar
-      }
-    }
-
+  handle.addEventListener("mousedown", (e) => {
+    if (e.target.tagName === "BUTTON") return;
+    startDrag(e.clientX, e.clientY);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
+  });
+
+  /* --- EVENTOS DE TOUCH (TABLETS / CELULARES) --- */
+  function onTouchMove(e) {
+    if (e.touches.length > 0) {
+      // Impede a tela do celular de rolar enquanto arrasta o item
+      e.preventDefault(); 
+      moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }
+
+  function onTouchEnd() {
+    stopDrag();
+  }
+
+  handle.addEventListener("touchstart", (e) => {
+    if (e.target.tagName === "BUTTON") return;
+    if (e.touches.length > 0) {
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      // O parâmetro { passive: false } permite usar e.preventDefault()
+      document.addEventListener("touchmove", onTouchMove, { passive: false });
+      document.addEventListener("touchend", onTouchEnd);
+    }
   });
 }
 
