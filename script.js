@@ -16,6 +16,67 @@ const POSTIT_COLORS = [
   { id: "gray", hex: "#e2e5ea" }
 ];
 
+/* =========================================================================
+   MEUS APPS — aba de atalhos para os projetos no GitHub
+   =========================================================================
+   Para adicionar um app novo, copie um bloco abaixo e edite os campos:
+
+   {
+     name: "Nome do app",              // aparece como título do card
+     description: "Frase curta.",      // 1 linha explicando o que ele faz
+     url: "https://github.com/...",    // link do repositório (ou site do app)
+     icon: "🚗"                        // emoji OU URL de imagem (png/svg/jpg)
+   }
+
+   - "icon" aceita tanto um emoji (ex: "🎮") quanto um link de imagem
+     (ex: "https://raw.githubusercontent.com/usuario/repo/main/icon.png").
+   - A ordem da lista é a ordem que os cards aparecem na tela.
+   - Para remover um app, apague o bloco { ... } inteiro (não esqueça a vírgula).
+   ========================================================================= */
+const MY_APPS = [
+  {
+    name: "EduAI",
+    description: "Transforme temas e arquivos em materiais de estudo completos com IA..",
+    url: "https://leandrocirilojs.github.io/Aiedu/",
+    icon: "🤖"
+  },
+  {
+    name: "Caderno Digital",
+    description: "Seu caderno digital",
+    url: "https://leandrocirilojs.github.io/cadernoads/",
+    icon: "💻"
+  }, {
+    name: "Cisco Packet Tracer/",
+    description: "Simulador de Rede",
+    url: "https://leandrocirilojs.github.io/Cisco-Packet-Tracer/",
+    icon: "🛜"
+  },
+   {
+    name: "Quiz IA",
+    description: "Cole qualquer conteúdo — resumo, PDF copiado, anotação de aula — e a IA gera perguntas infinitas sobre ele.",
+    url: "https://leandrocirilojs.github.io/faculdade/",
+    icon: "❓"
+  },
+   {
+    name: "Simulador-de-Encapsulamento-da-Internet/",
+    description: "Simulador De Encapsulamento Da Internet",
+    url: "https://leandrocirilojs.github.io/Simulador-de-Encapsulamento-da-Internet/",
+    icon: "🟧"
+  }
+,
+   {
+    name: "Controle de Saídas",
+    description: "Controle de saídas do Tenda",
+    url: "https://cullen.qzz.io/",
+    icon: "🏪"
+  }
+
+
+
+
+  // ⬆️ Edite os itens acima ou copie o bloco para adicionar mais apps
+];
+
 let SUBJECTS = JSON.parse(localStorage.getItem("agenda_subjects")) || DEFAULT_SUBJECTS;
 let ELEMENTS = JSON.parse(localStorage.getItem("agenda_elements")) || {};
 
@@ -349,13 +410,8 @@ function renderContent() {
     return;
   }
 
-  if (activeView === "schedule") {
-    noteSheet.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">＋</div>
-        <h3>Área em desenvolvimento</h3>
-        <p>Alterne para a aba "Anotações" ou "Tarefas" para interagir com o quadro.</p>
-      </div>`;
+  if (activeView === "apps") {
+    renderAppsGrid();
     return;
   }
 
@@ -588,6 +644,52 @@ function renderContent() {
 
   // Recalcula as dimensões da folha após adicionar todos os elementos
   adjustSheetSize();
+}
+
+/* ---------- GRID "MEUS APPS" ---------- */
+function isImageIcon(icon) {
+  return /^https?:\/\//i.test(icon) || /\.(png|jpe?g|svg|webp|gif)(\?.*)?$/i.test(icon);
+}
+
+function renderAppsGrid() {
+  currentSubjectName.textContent = "Meus Apps";
+  currentSubjectMeta.textContent = `${MY_APPS.length} app(s)`;
+
+  if (MY_APPS.length === 0) {
+    noteSheet.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🚀</div>
+        <h3>Nenhum app cadastrado ainda</h3>
+        <p>Adicione seus projetos editando a lista MY_APPS no início do script.js.</p>
+      </div>`;
+    return;
+  }
+
+  const grid = document.createElement("div");
+  grid.className = "apps-grid";
+
+  MY_APPS.forEach((app) => {
+    const card = document.createElement("a");
+    card.className = "app-card";
+    card.href = app.url;
+    card.target = "_blank";
+    card.rel = "noopener noreferrer";
+
+    const iconHtml = isImageIcon(app.icon)
+      ? `<img src="${escapeHtml(app.icon)}" alt="" />`
+      : `<span>${app.icon || "📦"}</span>`;
+
+    card.innerHTML = `
+      <div class="app-icon">${iconHtml}</div>
+      <div class="app-name">${escapeHtml(app.name)}</div>
+      <div class="app-desc">${escapeHtml(app.description || "")}</div>
+      <span class="app-link-btn">Ver no GitHub ↗</span>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  noteSheet.appendChild(grid);
 }
 
 function escapeHtml(text) {
