@@ -71,6 +71,14 @@ const MY_APPS = [
     icon: "🏪"
   }
 
+  ,
+   {
+    name: "Api Groq",
+    description: "API de inteligencia artificial Gratuita  ",
+    url: "https://console.groq.com/keys",
+    icon: "🦾"
+  }
+
 
 
 
