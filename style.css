@@ -703,6 +703,74 @@ html, body {
   background: var(--md-error-container);
 }
 
+/* ---------- GRID "MEUS APPS" ---------- */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.app-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--radius);
+  padding: 22px 16px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--elevation-1);
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.app-card:hover {
+  box-shadow: var(--elevation-2);
+  border-color: var(--md-primary);
+  transform: translateY(-2px);
+}
+
+.app-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--md-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--md-on-surface);
+}
+
+.app-desc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.app-link-btn {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-primary);
+}
+
 /* FORMULÁRIO DE ANOTAÇÃO SOBREPOSTO AO QUADRO */
 .notes-toolbar {
   position: relative;
