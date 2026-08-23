@@ -52,6 +52,12 @@ const MY_APPS = [
     icon: "🛜"
   },
    {
+    name: "Conceito de Engenharia De Software",
+    description: "Simulador Scrum",
+    url: "https://leandrocirilojs.github.io/engenharia/",
+    icon: "⚙️"
+  },
+   {
     name: "Quiz IA",
     description: "Cole qualquer conteúdo — resumo, PDF copiado, anotação de aula — e a IA gera perguntas infinitas sobre ele.",
     url: "https://leandrocirilojs.github.io/faculdade/",
